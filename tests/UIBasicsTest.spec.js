@@ -59,7 +59,7 @@ test('UI Controls', async({page})=>
     await expect(documentLink).toHaveAttribute("class","blinkingText");
 });
 
-test.only("Child Windows handling", async ({browser}) =>
+test("Child Windows handling", async ({browser}) =>
 {
     const context = await browser.newContext();
     const page = await context.newPage();
