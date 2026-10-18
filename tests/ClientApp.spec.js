@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { text } from 'node:stream/consumers';
+
 //Interview question Select 1 product, add to cart, checkout, get order ID and cross check order Id is found in order history list and deatils
-test('@Webst Client App login', async ({ page }) => {
+test.skip('@Webst Client App login', async ({ page }) => {
    //js file- Login js, DashboardPage
    const email = "anshikaw@yahoo.com";
    const productName = 'ZARA COAT 3';

@@ -1,15 +1,20 @@
 import { test, expect } from '@playwright/test';
+import { request } from 'node:http';
 
 test('Browser config Playwright', async ({browser})=>
 {
   
     const context = await browser.newContext();
     const page = await context.newPage();
+    //await page.route('**/*.css', route => route.abort()); //blocing css from FE
+    //await page.route('**/*.{jpg,png,jpeg}', route => route.abort()); //blocking images
     await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
     console.log(await page.title());
     const userName = page.locator('#username');
     const password = page.locator("[type='password']");
     const cardTitles = page.locator(".card-body a");
+    page.on('request', request => console.log(request.url())); //captures all request urls
+    page.on('response', response => console.log(response.url(), response.status()));
     //css - we only use CSS insterad of Xpath here for time compelexity
     await userName.fill("rahulshetty"); //type for edit box is deprictaed, now we use fill method
     await password.fill("learning");
