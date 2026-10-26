@@ -1,8 +1,9 @@
 // @ts-check
 const config = {
   testDir: './tests',
-  retries: 1,
-  workers: 3,
+  testMatch: '**/*.spec.js',
+  retries: 0,
+  //workers: 3,
 
   use:{  //action Timeouts globally
     actionTimeout: 10 * 1000,

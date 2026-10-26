@@ -1,6 +1,6 @@
 const base = require('@playwright/test');
 
-exports.customtest = base.test.extend({
+exports.customtest1 = base.test.extend({
     testDataForOrder: async ({}, use) => {
         await use({
             username: "achyuthmanepally@gmail.com",

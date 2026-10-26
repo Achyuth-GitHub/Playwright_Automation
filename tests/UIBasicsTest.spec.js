@@ -16,6 +16,7 @@ test('Browser config Playwright', async ({browser})=>
     page.on('request', request => console.log(request.url())); //captures all request urls
     page.on('response', response => console.log(response.url(), response.status()));
     //css - we only use CSS insterad of Xpath here for time compelexity
+    await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
     await userName.fill("rahulshetty"); //type for edit box is deprictaed, now we use fill method
     await password.fill("learning");
     await page.locator("#signInBtn").click();

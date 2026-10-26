@@ -1,36 +1,70 @@
-const {test, expect} = require("@playwright/test");
+ const {test, expect} = require('@playwright/test');
+ const {customtest1} = require('../utils/test-base');
 
-//test.describe.configure({mode:'parallel'});
-test.describe.configure({mode:'serial'});
+ const {POManager} = require('../pageobjects/POManager');
+ //Json->string->js object
+ const dataset =  JSON.parse(JSON.stringify(require("../utils/placeorderTestData.json")));
 
-
-test("Popup Validations", async({page}) =>
+ 
+for(const data of dataset)
 {
-    await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
-    // await page.goto("https://google.com");
-    // await page.goBack(); //back button on browser
-    // await page.goForward(); //forward button on browser
-    await expect(page.locator("#displayed-text")).toBeVisible();
-    await page.locator("#hide-textbox").click();
-    await expect(page.locator("#displayed-text")).toBeHidden();
+ test(`@Webs Client App login for ${data.productName}`, async ({page})=>
+ {
+   const poManager = new POManager(page);
+    //js file- Login js, DashboardPage
+     const products = page.locator(".card-body");
+     const loginPage = poManager.getLoginPage();
+     await loginPage.goTo();
+     await loginPage.validLogin(data.username,data.password);
+     const dashboardPage = poManager.getDashboardPage();
+     await dashboardPage.searchProductAddCart(data.productName);
+     await dashboardPage.navigateToCart();
 
-    const framesPage = page.frameLocator("#courses-iframe");
-    await framesPage.locator("li a[href*='lifetime-access']:visible").click();
-    const textCheck = await framesPage.locator(".text h2").textContent();
-    console.log(textCheck.split(" ")[1]);
-})
+    const cartPage = poManager.getCartPage();
+    await cartPage.VerifyProductIsDisplayed(data.productName);
+    await cartPage.Checkout();
 
-test(" @Web Screenshot & Visual Comparision", async({page}) =>
-{   
-     await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
-    await expect(page.locator("#displayed-text")).toBeVisible();
-    await page.locator("#displayed-text").screenshot({path:'partialScreenshot.png'});
-    await page.locator("#hide-textbox").click();
-    await page.screenshot({path: 'screenshot.png'});
-    await expect(page.locator("#displayed-text")).toBeHidden();
-})
+    const ordersReviewPage = poManager.getOrdersReviewPage();
+    await ordersReviewPage.searchCountryAndSelect("ind","India");
+    const orderId = await ordersReviewPage.SubmitAndGetOrderId();
+   console.log(orderId);
+   await dashboardPage.navigateToOrders();
+   const ordersHistoryPage = poManager.getOrdersHistoryPage();
+   await ordersHistoryPage.searchOrderAndSelect(orderId);
+   expect(orderId.includes(await ordersHistoryPage.getOrderId())).toBeTruthy();
 
-test('Visual Testing',async({page}) => {
-    await page.goto("https://www.Google.com");
-    expect(await page.screenshot()).toMatchSnapshot('landing.png');
+
+
+
+
+ });
+}
+
+ customtest1(`Client App login`, async ({page,testDataForOrder})=>
+ {
+   const poManager = new POManager(page);
+    //js file- Login js, DashboardPage
+     const products = page.locator(".card-body");
+     const loginPage = poManager.getLoginPage();
+     await loginPage.goTo();
+     await loginPage.validLogin(testDataForOrder.username,testDataForOrder.password);
+     const dashboardPage = poManager.getDashboardPage();
+     await dashboardPage.searchProductAddCart(testDataForOrder.productName);
+     await dashboardPage.navigateToCart();
+
+    const cartPage = poManager.getCartPage();
+    await cartPage.VerifyProductIsDisplayed(testDataForOrder.productName);
+    await cartPage.Checkout();
+
+
 })
+//test files will trigger parallel
+//individual tests in the file will run in sequence
+ 
+
+ 
+
+
+
+ 
+
